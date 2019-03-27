@@ -8,9 +8,9 @@ import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Repository
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStream
 
 @Repository
 class DocumentRepository {
@@ -24,16 +24,28 @@ class DocumentRepository {
      * @param sheetIdx シート番号
      * @return 雛形ファイル情報
      */
-    fun load(format: String, sheetIdx: Int = 0): ExcelData {
+    fun load(format: String, sheetIdx: Int = 0): ExcelData? {
+        var inputStream: InputStream? = null
+        val workbook: Workbook?
         try {
             val resource = ClassPathResource("formats/$format")
-            val workbook = WorkbookFactory.create(resource.file)
-            return ExcelData(workbook, sheetIdx)
+            inputStream = resource.inputStream
+            workbook = WorkbookFactory.create(inputStream)
         } catch (e: IOException) {
             throw e
         } catch (e: InvalidFormatException) {
             throw e
+        } finally {
+            try {
+                inputStream?.close()
+            } catch (e: IOException){
+                throw e
+            }
         }
+        if (workbook != null) {
+            return ExcelData(workbook, sheetIdx)
+        }
+        return null
     }
 
     fun save(excelData: ExcelData) {
