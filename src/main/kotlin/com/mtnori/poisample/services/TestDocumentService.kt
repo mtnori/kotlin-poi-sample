@@ -31,7 +31,7 @@ class TestDocumentService {
             println(excelData.getCellValue(20,0)) // 数値
             println(excelData.getCellValue(21,0)) // 真偽値
             println(excelData.getCellValue(22,0)) // 計算結果
-            println(excelData.getCellValue(23,0)) // エラー(上手く出ない)
+            println(excelData.getCellValue(23,0)) // エラー
             println(excelData.getCellValue(25,1)) // 結合セル
             println(excelData.getCellValue(26,0)) // 日付
             documentRepository.save(excelData, "output.xlsx")

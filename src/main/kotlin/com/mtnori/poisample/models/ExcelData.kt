@@ -147,6 +147,17 @@ class ExcelData (private val workbook: Workbook, sheetIdx: Int = 0) {
             CellType.BOOLEAN -> {
                 return cell.booleanCellValue.toString()
             }
+            CellType.ERROR -> {
+                val errorCode = cell.errorCellValue
+                val error: FormulaError = FormulaError.forInt(errorCode)
+                return error.string
+            }
+            CellType.BLANK -> {
+                return getStringRangeValue(cell)
+            }
+            CellType._NONE -> {
+                return ""
+            }
             else -> {
                 return ""
             }
@@ -194,12 +205,6 @@ class ExcelData (private val workbook: Workbook, sheetIdx: Int = 0) {
                 return cell.booleanCellValue.toString()
             }
             CellType.FORMULA -> {
-                // return cell.cellFormula
-                if (cell.cachedFormulaResultType == CellType.ERROR) {
-                    val errorCode = cell.errorCellValue
-                    val error: FormulaError = FormulaError.forInt(errorCode)
-                    return error.string
-                }
                 return getStringFormulaValue(cell)
             }
             CellType.ERROR -> {
@@ -209,6 +214,9 @@ class ExcelData (private val workbook: Workbook, sheetIdx: Int = 0) {
             }
             CellType.BLANK -> {
                 return getStringRangeValue(cell)
+            }
+            CellType._NONE -> {
+                return ""
             }
             else -> {
                 return ""
