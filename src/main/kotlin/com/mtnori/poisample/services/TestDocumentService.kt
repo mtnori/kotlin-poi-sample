@@ -13,8 +13,11 @@ class TestDocumentService {
     fun create() {
         val excelData = documentRepository.load("test.xlsx")
         if (excelData !== null) {
-            excelData.print()
-            documentRepository.save(excelData)
+            excelData.writeCell("cell", 0, 0)
+            excelData.writeCell("newCell", 3, 4)
+            excelData.writeCellFormula("MOD(10, 3)", 2, 2)
+            excelData.writeCellByName("名前定義", "cell_name")
+            documentRepository.save(excelData, "output.xlsx")
         }
     }
 }

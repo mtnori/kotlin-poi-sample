@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
+import java.io.OutputStream
 
 @Repository
 class DocumentRepository {
@@ -22,7 +23,7 @@ class DocumentRepository {
      * 雛形ファイルを読み込む
      * @param format 雛形パス
      * @param sheetIdx シート番号
-     * @return 雛形ファイル情報
+     * @return Excelデータ
      */
     fun load(format: String, sheetIdx: Int = 0): ExcelData? {
         var inputStream: InputStream? = null
@@ -48,9 +49,24 @@ class DocumentRepository {
         return null
     }
 
-    fun save(excelData: ExcelData) {
-        val outputStream = FileOutputStream("${appProperties.outputDir}/output.xlsx")
-        excelData.workbook.write(outputStream)
-        outputStream.close()
+    /**
+     * ファイルを保存する
+     * @param excelData Excelデータ
+     * @param filename ファイル名
+     */
+    fun save(excelData: ExcelData, filename: String) {
+        var outputStream: OutputStream? = null
+        try {
+            outputStream = FileOutputStream("${appProperties.outputDir}/$filename")
+            excelData.save(outputStream)
+        } catch (e: IOException) {
+            throw e
+        } finally {
+            try {
+                outputStream?.close()
+            } catch (e: IOException) {
+                throw e
+            }
+        }
     }
 }
