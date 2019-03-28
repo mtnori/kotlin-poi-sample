@@ -134,7 +134,7 @@ class ExcelData (private val workbook: Workbook, sheetIdx: Int = 0) {
         val helper: CreationHelper = this.workbook.creationHelper
         val evaluator: FormulaEvaluator = helper.createFormulaEvaluator()
         val value: CellValue = evaluator.evaluate(cell)
-        when(value.cellType) {
+        when(value.cellTypeEnum) {
             CellType.STRING -> {
                 return cell.stringCellValue
             }
@@ -191,7 +191,7 @@ class ExcelData (private val workbook: Workbook, sheetIdx: Int = 0) {
      */
     fun getCellValue(rowIdx: Int, colIdx: Int): String {
         val cell: Cell = getCell(rowIdx, colIdx)
-        when(cell.cellType) {
+        when(cell.cellTypeEnum) {
             CellType.STRING -> {
                 return cell.stringCellValue
             }
@@ -220,6 +220,58 @@ class ExcelData (private val workbook: Workbook, sheetIdx: Int = 0) {
             }
             else -> {
                 return ""
+            }
+        }
+    }
+
+    /**
+     * 行を挿入する
+     * その際、スタイルとセル結合情報を開始行からコピーする
+     * @param startRowIdx 開始行
+     */
+    fun insertRow(startRowIdx: Int) {
+        // コピー元の行を取得
+        val originalRow = getRow(startRowIdx)
+
+        // シート末尾に新しい行を追加
+        val lastRowNum = this.sheet.lastRowNum
+        this.sheet.createRow(lastRowNum + 1)
+
+        // 行を追加する位置以降の行を下にずらす
+        this.sheet.shiftRows(startRowIdx + 1, lastRowNum, 1)
+
+        // 追加した行にスタイルを設定
+        val newRow = getRow(startRowIdx + 1)
+        for(colIdx in 0..(originalRow.lastCellNum - 1)) {
+            val originalCell = originalRow.getCell(colIdx)
+            val newCell = newRow.createCell(colIdx)
+
+            // セルのスタイルをコピー
+            val newCellStyle = this.workbook.createCellStyle()
+            newCellStyle.cloneStyleFrom(originalCell.cellStyle)
+            newCell.cellStyle = newCellStyle
+
+            // セルタイプのコピー
+            newCell.setCellType(originalCell.cellTypeEnum)
+
+            // 追加した行にマージ状態を設定
+            if(this.sheet.numMergedRegions > 0) {
+                for (index in 0..(this.sheet.numMergedRegions - 1)) {
+                    val cellRangeAddress = this.sheet.getMergedRegion(index)
+                    // コピー元セル(結合済み)の左上セルがmergedRegionと一致すれば、
+                    // 新しいセルに対してmergeRegionを追加する
+                    if (cellRangeAddress.firstRow == originalCell.rowIndex
+                            && cellRangeAddress.firstColumn == originalCell.columnIndex
+                    ) {
+                        this.sheet.addMergedRegion((CellRangeAddress(
+                                newRow.rowNum,
+                                newRow.rowNum + (cellRangeAddress.lastRow - cellRangeAddress.firstRow),
+                                cellRangeAddress.firstColumn,
+                                cellRangeAddress.lastColumn
+                        )))
+                        break
+                    }
+                }
             }
         }
     }

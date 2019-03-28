@@ -21,9 +21,9 @@ dependencies {
 	implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	// https://mvnrepository.com/artifact/org.apache.poi/poi
-	compile group: 'org.apache.poi', name: 'poi', version: '4.0.1'
+	compile group: 'org.apache.poi', name: 'poi', version: '3.17'
 	// https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
-	compile group: 'org.apache.poi', name: 'poi-ooxml', version: '4.0.1'
+	compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
 }
 
 compileKotlin {

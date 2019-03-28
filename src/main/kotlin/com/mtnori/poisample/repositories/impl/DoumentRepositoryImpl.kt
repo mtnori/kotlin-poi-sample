@@ -1,8 +1,9 @@
-package com.mtnori.poisample.repositories
+package com.mtnori.poisample.repositories.impl
 
-import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.mtnori.poisample.AppProperties
 import com.mtnori.poisample.models.ExcelData
+import com.mtnori.poisample.repositories.DocumentRepository
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,7 +15,7 @@ import java.io.InputStream
 import java.io.OutputStream
 
 @Repository
-class DocumentRepository {
+class DocumentRepositoryImpl: DocumentRepository  {
 
     @Autowired
     lateinit var appProperties: AppProperties
@@ -25,7 +26,7 @@ class DocumentRepository {
      * @param sheetIdx シート番号
      * @return Excelデータ
      */
-    fun load(format: String, sheetIdx: Int = 0): ExcelData? {
+    override fun load(format: String, sheetIdx: Int): ExcelData? {
         var inputStream: InputStream? = null
         val workbook: Workbook?
         try {
@@ -54,7 +55,7 @@ class DocumentRepository {
      * @param excelData Excelデータ
      * @param filename ファイル名
      */
-    fun save(excelData: ExcelData, filename: String) {
+    override fun save(excelData: ExcelData, filename: String) {
         var outputStream: OutputStream? = null
         try {
             outputStream = FileOutputStream("${appProperties.outputDir}/$filename")
