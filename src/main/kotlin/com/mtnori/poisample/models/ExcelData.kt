@@ -397,4 +397,14 @@ class ExcelData (private val workbook: Workbook, sheetIdx: Int = 0) {
             }
         }
     }
+
+    /**
+     * 指定した行の高さを設定する
+     * @param rowIdx 行番号
+     * @param n デフォルトの高さの何倍に設定するか
+     */
+    fun setRowHeight(rowIdx: Int, n: Int) {
+        val row = getRow(rowIdx)
+        row.heightInPoints = n * sheet.defaultRowHeightInPoints
+    }
 }

@@ -13,6 +13,7 @@ class TestDocumentServiceImpl(
         if (excelData !== null) {
             // 既存セルに値をセットする
             excelData.writeCell("cell", 0, 0)
+            excelData.setRowHeight(0, 2)
             // 新規セルに値をセットする
             excelData.writeCell("newCell", 3, 4)
             // 計算式をセットする
