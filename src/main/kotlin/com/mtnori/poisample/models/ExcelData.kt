@@ -4,12 +4,21 @@ import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.ss.util.CellReference
 import java.io.OutputStream
+import java.util.*
 
 /**
  * Excelデータを表現するモデルクラス
  */
 class ExcelData (private val workbook: Workbook, sheetIdx: Int = 0) {
     private var sheet: Sheet = workbook.getSheetAt(sheetIdx)
+    private var defaultStyle: CellStyle = workbook.createCellStyle()
+
+    init {
+        val font: Font = workbook.createFont()
+        font.fontHeightInPoints = 11
+        font.fontName = "ＭＳ Ｐゴシック"
+        defaultStyle.setFont(font)
+    }
 
     /**
      * ワークブックを保存する
@@ -46,26 +55,122 @@ class ExcelData (private val workbook: Workbook, sheetIdx: Int = 0) {
     }
 
     /**
-     * セルに文字列を設定する
-     * @param value 文字列
+     * セルに値を設定する
+     * @param value 値(String型)
      * @param rowIdx 行番号
      * @param colIdx 列番号
+     * @param style セルスタイル
      */
-    fun writeCell(value: String, rowIdx: Int, colIdx: Int) {
+    fun writeCell(value: String, rowIdx: Int, colIdx: Int, style: CellStyle = defaultStyle) {
         // セルを取得する
         val cell: Cell = getCell(rowIdx, colIdx)
         // セルの値を設定する
         cell.setCellValue(value)
+        // セルのスタイルを設定する
+        cell.cellStyle = style
     }
 
     /**
-     * 名前定義からセルを探して文字列をセットする
+     * セルに値を設定する
+     * @param value 値(Double型)
+     * @param rowIdx 行番号
+     * @param colIdx 列番号
+     * @param style セルスタイル
      */
-    fun writeCellByName(value: String, name: String) {
+    fun writeCell(value: Double, rowIdx: Int, colIdx: Int, style: CellStyle = defaultStyle) {
+        // セルを取得する
+        val cell: Cell = getCell(rowIdx, colIdx)
+        // セルの値を設定する
+        cell.setCellValue(value)
+        // セルのスタイルを設定する
+        cell.cellStyle = style
+    }
+
+    /**
+     * セルに値を設定する
+     * @param value 値(Date型)
+     * @param rowIdx 行番号
+     * @param colIdx 列番号
+     * @param style セルスタイル
+     */
+    fun writeCell(value: Date, rowIdx: Int, colIdx: Int, style: CellStyle = defaultStyle) {
+        // セルを取得する
+        val cell: Cell = getCell(rowIdx, colIdx)
+        // セルの値を設定する
+        cell.setCellValue(value)
+        // セルのスタイルを設定する
+        cell.cellStyle = style
+    }
+
+    /**
+     * セルに値を設定する
+     * @param value 値(Boolean型)
+     * @param rowIdx 行番号
+     * @param colIdx 列番号
+     * @param style セルスタイル
+     */
+    fun writeCell(value: Boolean, rowIdx: Int, colIdx: Int, style: CellStyle = defaultStyle) {
+        // セルを取得する
+        val cell: Cell = getCell(rowIdx, colIdx)
+        // セルの値を設定する
+        cell.setCellValue(value)
+        // セルのスタイルを設定する
+        cell.cellStyle = style
+    }
+
+    /**
+     * 名前定義からセルを探して値をセットする
+     * @param value 値(String型)
+     * @param name セルの名前定義
+     * @param style セルスタイル
+     */
+    fun writeCellByName(value: String, name: String, style: CellStyle = defaultStyle) {
         val lName = this.workbook.getName(name)
         if (lName !== null) {
             val ref = CellReference(lName.refersToFormula)
-            writeCell(value, ref.row, ref.col.toInt())
+            writeCell(value, ref.row, ref.col.toInt(), style)
+        }
+    }
+
+    /**
+     * 名前定義からセルを探して値をセットする
+     * @param value 値(Double型)
+     * @param name セルの名前定義
+     * @param style セルスタイル
+     */
+    fun writeCellByName(value: Double, name: String, style: CellStyle = defaultStyle) {
+        val lName = this.workbook.getName(name)
+        if (lName !== null) {
+            val ref = CellReference(lName.refersToFormula)
+            writeCell(value, ref.row, ref.col.toInt(), style)
+        }
+    }
+
+    /**
+     * 名前定義からセルを探して値をセットする
+     * @param value 値(Date型)
+     * @param name セルの名前定義
+     * @param style セルスタイル
+     */
+    fun writeCellByName(value: Date, name: String, style: CellStyle = defaultStyle) {
+        val lName = this.workbook.getName(name)
+        if (lName !== null) {
+            val ref = CellReference(lName.refersToFormula)
+            writeCell(value, ref.row, ref.col.toInt(), style)
+        }
+    }
+
+    /**
+     * 名前定義からセルを探して値をセットする
+     * @param value 値(Boolean型)
+     * @param name セルの名前定義
+     * @param style セルスタイル
+     */
+    fun writeCellByName(value: Boolean, name: String, style: CellStyle = defaultStyle) {
+        val lName = this.workbook.getName(name)
+        if (lName !== null) {
+            val ref = CellReference(lName.refersToFormula)
+            writeCell(value, ref.row, ref.col.toInt(), style)
         }
     }
 
@@ -74,12 +179,29 @@ class ExcelData (private val workbook: Workbook, sheetIdx: Int = 0) {
      * @param value 計算式
      * @param rowIdx 行番号
      * @param colIdx 列番号
+     * @param style セルスタイル
      */
-    fun writeCellFormula(value: String, rowIdx: Int, colIdx: Int) {
+    fun writeCellFormula(value: String, rowIdx: Int, colIdx: Int, style: CellStyle = defaultStyle) {
         // セルを取得する
         val cell: Cell = getCell(rowIdx, colIdx)
         // セルの値を設定する
         cell.cellFormula = value
+        // セルのスタイルを設定する
+        cell.cellStyle = style
+    }
+
+    /**
+     * 名前定義からセルを探して計算式をセットする
+     * @param value 計算式
+     * @param name セルの名前定義
+     * @param style セルスタイル
+     */
+    fun writeCellFormulaByName(value: Boolean, name: String, style: CellStyle = defaultStyle) {
+        val lName = this.workbook.getName(name)
+        if (lName !== null) {
+            val ref = CellReference(lName.refersToFormula)
+            writeCell(value, ref.row, ref.col.toInt(), style)
+        }
     }
 
     /**
