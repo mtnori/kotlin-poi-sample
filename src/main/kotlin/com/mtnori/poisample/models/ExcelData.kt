@@ -105,7 +105,7 @@ class ExcelData (private val workbook: Workbook, sheetIdx: Int = 0) {
      * @param startColIdx 開始列
      * @param mergeColNum 列結合数
      */
-    fun unmergeCells(startRowIdx: Int, mergeRowNum: Int, startColIdx: Int, mergeColNum: Int) {
+    fun unMergeCells(startRowIdx: Int, mergeRowNum: Int, startColIdx: Int, mergeColNum: Int) {
         val targetRange = CellRangeAddress(
                 startRowIdx,
                 startRowIdx + mergeRowNum - 1,

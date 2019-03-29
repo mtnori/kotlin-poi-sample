@@ -6,7 +6,6 @@ import com.mtnori.poisample.repositories.DocumentRepository
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Repository
 import java.io.FileOutputStream
@@ -15,11 +14,9 @@ import java.io.InputStream
 import java.io.OutputStream
 
 @Repository
-class DocumentRepositoryImpl: DocumentRepository  {
-
-    @Autowired
-    lateinit var appProperties: AppProperties
-
+class DocumentRepositoryImpl(
+        private val appProperties: AppProperties
+): DocumentRepository  {
     /**
      * 雛形ファイルを読み込む
      * @param format 雛形パス

@@ -2,16 +2,13 @@ package com.mtnori.poisample.services.impl
 
 import com.mtnori.poisample.repositories.DocumentRepository
 import com.mtnori.poisample.services.TestDocumentService
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class TestDocumentServiceImpl: TestDocumentService {
-
-    @Autowired
-    lateinit var documentRepository: DocumentRepository
-
-    override fun create() {
+class TestDocumentServiceImpl(
+        private val documentRepository: DocumentRepository
+): TestDocumentService {
+      override fun create() {
         val excelData = documentRepository.load("test.xlsx")
         if (excelData !== null) {
             // 既存セルに値をセットする
@@ -25,7 +22,7 @@ class TestDocumentServiceImpl: TestDocumentService {
             // セルの結合
             excelData.mergeCells(15, 2, 0, 3)
             // セルの結合(結合されているセルは再結合できないので、結合を解除する)
-            excelData.unmergeCells(7, 2, 0, 3)
+            excelData.unMergeCells(7, 2, 0, 3)
             excelData.mergeCells(7, 2, 0, 3)
             // セルの値を取得する
             println(excelData.getCellValue(19,0)) // 文字列
