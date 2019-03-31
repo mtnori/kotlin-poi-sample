@@ -8,10 +8,7 @@ import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Repository
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
+import java.io.*
 
 @Repository
 class DocumentRepositoryImpl(
@@ -51,12 +48,15 @@ class DocumentRepositoryImpl(
      * ファイルを保存する
      * @param excelData Excelデータ
      * @param filename ファイル名
+     * @return 作成したファイルのパス
      */
-    override fun save(excelData: ExcelData, filename: String) {
+    override fun save(excelData: ExcelData, filename: String): String {
         var outputStream: OutputStream? = null
         try {
-            outputStream = FileOutputStream("${appProperties.outputDir}/$filename")
+            val file: File = File("${appProperties.outputDir}/$filename")
+            outputStream = FileOutputStream(file)
             excelData.save(outputStream)
+            return file.absolutePath
         } catch (e: IOException) {
             throw e
         } finally {

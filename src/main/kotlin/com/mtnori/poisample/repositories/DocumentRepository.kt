@@ -15,6 +15,7 @@ interface DocumentRepository {
      * ファイルを保存する
      * @param excelData Excelデータ
      * @param filename ファイル名
+     * @return 作成したファイルのパス
      */
-    fun save(excelData: ExcelData, filename: String)
+    fun save(excelData: ExcelData, filename: String): String
 }

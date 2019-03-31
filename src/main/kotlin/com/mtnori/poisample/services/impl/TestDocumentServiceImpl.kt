@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 class TestDocumentServiceImpl(
         private val documentRepository: DocumentRepository
 ): TestDocumentService {
-      override fun create() {
+    override fun create() {
         val excelData = documentRepository.load("test.xlsx")
         if (excelData !== null) {
             // 既存セルに値をセットする
@@ -41,5 +41,15 @@ class TestDocumentServiceImpl(
             excelData2.insertRow(3)
             documentRepository.save(excelData2, "output2.xlsx")
         }
+    }
+
+    override fun create2(stringData: String, longData: Long): String {
+        val excelData = documentRepository.load("test3.xlsx")
+        if (excelData !== null) {
+            excelData.writeCell(stringData, 0, 0)
+            excelData.writeCell(longData.toDouble(), 0, 1)
+            return documentRepository.save(excelData, "output3.xlsx")
+        }
+        return ""
     }
 }
